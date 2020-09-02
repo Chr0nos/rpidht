@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "rpidht"
+version = "0.1.0"
+description = "Program to monitor temperature/humidity and save it into a mongodb"
+authors = ["Chr0nos <snicolet@student.42.fr>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+matplotlib = "^3.3.1"
+mongomodel = "^0.4.2"
+wheel = "^0.35.1"
+timeloop = "^1.0.2"
+tabulate = "^0.8.7"
+click = "^7.1.2"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
