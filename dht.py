@@ -50,6 +50,11 @@ class Event(mongomodel.Document):
             headers=('temperature', 'humidity', 'date'),
             tablefmt='pretty'))
 
+    def to_dict(self):
+        data = super().to_dict()
+        data['date'] = data['date'].timestamp()
+        return data
+
 
 @click.group()
 def cli():
@@ -119,10 +124,25 @@ def display_graph():
     plt.show()
 
 
+@click.command()
+@click.argument('file')
+def export(file):
+    import json
+
+    with open(file, 'w') as fp:
+        json.dump(
+            [event.to_dict() for event in Event.objects.sort(('date',))],
+            sort_keys=True,
+            indent=4,
+            fp=fp
+        )
+
+
 if __name__ == "__main__":
     mongomodel.database.connect(host='192.168.1.41', db='test')
 
     cli.add_command(capture_events)
     cli.add_command(show_all)
     cli.add_command(display_graph)
+    cli.add_command(export)
     cli()

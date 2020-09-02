@@ -8,11 +8,11 @@ license = "MIT"
 [tool.poetry.dependencies]
 python = "^3.7"
 matplotlib = "^3.3.1"
-mongomodel = "^0.4.2"
 wheel = "^0.35.1"
 timeloop = "^1.0.2"
 tabulate = "^0.8.7"
 click = "^7.1.2"
+mongomodel = "^0.4.3"
 
 [tool.poetry.dev-dependencies]
 

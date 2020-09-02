@@ -56,7 +56,7 @@ description = "Tiny mongodb odm, it mimics the orm of django"
 name = "mongomodel"
 optional = false
 python-versions = "*"
-version = "0.4.2"
+version = "0.4.3"
 
 [package.dependencies]
 pymongo = ">=3.9.0"
@@ -153,7 +153,7 @@ version = "0.35.1"
 test = ["pytest (>=3.0.0)", "pytest-cov"]
 
 [metadata]
-content-hash = "b2696e278485df29d8193cf212f6c72efdc79ca2d7521a315ef479f8209ef751"
+content-hash = "ec6136e4e9ee8de47c77b7b1280cf406ecbe5a4fdb9dc08000f4753cfc1171e7"
 python-versions = "^3.7"
 
 [metadata.files]
@@ -220,7 +220,7 @@ matplotlib = [
     {file = "matplotlib-3.3.1.tar.gz", hash = "sha256:87f53bcce90772f942c2db56736788b39332d552461a5cb13f05ff45c1680f0e"},
 ]
 mongomodel = [
-    {file = "mongomodel-0.4.2-py3-none-any.whl", hash = "sha256:89a23a1d2ba6a3f1bbba46ad65ed71fa9834d2b638e88850057b84698cdd5e41"},
+    {file = "mongomodel-0.4.3-py3-none-any.whl", hash = "sha256:ccf557522fdb2dad62a69fdc53c904cf5d64252dd08bb39cfc634442ce9e2bae"},
 ]
 numpy = [
     {file = "numpy-1.19.1-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:b1cca51512299841bf69add3b75361779962f9cee7d9ee3bb446d5982e925b69"},
