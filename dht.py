@@ -9,35 +9,18 @@ from time import sleep
 from tabulate import tabulate
 # from timeloop import TimeLoop
 import click
+import json
 
 
 # tl = TimeLoop()
 
 
-class Event(mongomodel.Document):
-    temperature = mongomodel.FloatField()
-    humidity = mongomodel.FloatField()
-    date = mongomodel.DateTimeField(default=lambda: datetime.now())
+class EventManager(mongomodel.QuerySet):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._db.connect(host='192.168.1.41', db='test')
 
-    @classmethod
-    def new(cls) -> 'Event':
-        assert Adafruit_DHT is not None
-        sensor = Adafruit_DHT.AM2302
-        pin = 23
-        while True:
-            humidity, temperature = Adafruit_DHT.read_retry(sensor, pin)
-            if temperature is not None and humidity is not None:
-                event = cls(temperature=temperature, humidity=humidity)
-                return event
-
-    def __str__(self):
-        temp = f'{round(self.temperature, 2)}°C'
-        humidity = f'{round(self.humidity, 2)}%'
-        date = (self.date + timedelta(hours=2)).strftime('%Y-%m-%d %H:%M:%S')
-        return f'temp: {temp:5} humidity: {humidity:5} date: {date}'
-
-    @classmethod
-    def showall(cls):
+    def showall(self):
         def get_values(event):
             return (
                 round(event.temperature, 2),
@@ -46,19 +29,49 @@ class Event(mongomodel.Document):
             )
 
         print(tabulate(
-            [get_values(event) for event in cls.objects.sort(['date'])],
+            [get_values(event) for event in self.sort(['date'])],
             headers=('temperature', 'humidity', 'date'),
             tablefmt='pretty'))
+
+    def create_from_sensor(self) -> 'Event':
+        assert Adafruit_DHT is not None
+        sensor = Adafruit_DHT.AM2302
+        pin = 23
+        while True:
+            humidity, temperature = Adafruit_DHT.read_retry(sensor, pin)
+            if temperature is not None and humidity is not None:
+                event = self.create(
+                    temperature=temperature,
+                    humidity=humidity
+                )
+                return event
+
+    def to_json(self, filepath: str):
+        with open(filepath, 'w') as fp:
+            json.dump(
+                [event.to_dict() for event in self.sort(['date'])],
+                sort_keys=True,
+                indent=4,
+                fp=fp
+            )
+
+
+class Event(mongomodel.Document):
+    manager_class = EventManager
+    temperature = mongomodel.FloatField()
+    humidity = mongomodel.FloatField()
+    date = mongomodel.DateTimeField(default=lambda: datetime.utcnow())
+
+    def __str__(self):
+        temp = f'{round(self.temperature, 2)}°C'
+        humidity = f'{round(self.humidity, 2)}%'
+        date = (self.date + timedelta(hours=2)).strftime('%Y-%m-%d %H:%M:%S')
+        return f'temp: {temp:5} humidity: {humidity:5} date: {date}'
 
     def to_dict(self):
         data = super().to_dict()
         data['date'] = data['date'].timestamp()
         return data
-
-
-@click.group()
-def cli():
-    pass
 
 
 class ConsitentWaiter:
@@ -83,8 +96,7 @@ class ConsitentWaiter:
 
 # @tl.job(timedelta(minutes=10))
 # def create_new_event():
-#     event = Event.new()
-#     event.save()
+#     event = Event.objects.create_from_sensor()
 #     print(event)
 
 
@@ -94,8 +106,7 @@ def capture_events():
     try:
         while True:
             with ConsitentWaiter(duration=timedelta(minutes=10)):
-                event = Event.new()
-                event.save()
+                event = Event.objects.create_from_sensor()
                 print(event)
     except KeyboardInterrupt:
         print('Exit')
@@ -103,7 +114,7 @@ def capture_events():
 
 @click.command()
 def show_all():
-    Event.showall()
+    Event.objects.showall()
 
 
 @click.command()
@@ -112,9 +123,10 @@ def display_graph():
     from matplotlib import pyplot as plt
 
     qs = Event.objects.sort(['date'])
-    temperatures = np.array([event.temperature for event in qs])
-    humidities = np.array([event.humidity for event in qs])
-    dates = np.array([event.date + timedelta(hours=2) for event in qs])
+
+    temperatures = np.array(qs.values_list('temperature', flat=True))
+    humidities = np.array(qs.values_list('humidity', flat=True))
+    dates = np.array(qs.values_list('date', flat=True))
 
     plt.plot(dates, temperatures, label='Temperature')
     plt.plot(dates, humidities, label='Humidity')
@@ -138,9 +150,12 @@ def export(file):
         )
 
 
-if __name__ == "__main__":
-    mongomodel.database.connect(host='192.168.1.41', db='test')
+@click.group()
+def cli():
+    pass
 
+
+if __name__ == "__main__":
     cli.add_command(capture_events)
     cli.add_command(show_all)
     cli.add_command(display_graph)
