@@ -25,7 +25,7 @@ class EventManager(mongomodel.QuerySet):
             return (
                 round(event.temperature, 2),
                 round(event.humidity, 2),
-                event.date + timedelta(hours=2)
+                event.date
             )
 
         print(tabulate(
@@ -47,9 +47,16 @@ class EventManager(mongomodel.QuerySet):
                 return event
 
     def to_json(self, filepath: str):
+        def event_json(event: Event):
+            return {
+                'date': event.date.timestamp(),
+                'tempereature': event.temperature,
+                'humidity': event.humidity
+            }
+
         with open(filepath, 'w') as fp:
             json.dump(
-                [event.to_dict() for event in self.sort(['date'])],
+                [event_json(event) for event in self.sort(['date'])],
                 sort_keys=True,
                 indent=4,
                 fp=fp
@@ -65,7 +72,7 @@ class Event(mongomodel.Document):
     def __str__(self):
         temp = f'{round(self.temperature, 2)}°C'
         humidity = f'{round(self.humidity, 2)}%'
-        date = (self.date + timedelta(hours=2)).strftime('%Y-%m-%d %H:%M:%S')
+        date = self.date.strftime('%Y-%m-%d %H:%M:%S')
         return f'temp: {temp:5} humidity: {humidity:5} date: {date}'
 
     def to_dict(self):
