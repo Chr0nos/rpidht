@@ -75,11 +75,6 @@ class Event(mongomodel.Document):
         date = self.date.strftime('%Y-%m-%d %H:%M:%S')
         return f'temp: {temp:5} humidity: {humidity:5} date: {date}'
 
-    def to_dict(self):
-        data = super().to_dict()
-        data['date'] = data['date'].timestamp()
-        return data
-
 
 class ConsitentWaiter:
     """This context manager waits for a consitent time regarding to the task
