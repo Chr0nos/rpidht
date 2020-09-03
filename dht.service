@@ -1,0 +1,9 @@
+[Service]
+ExecStart=/home/alarm/projects/rpidht/dht.py capture-events
+Type=simple
+
+[Unit]
+Desription=Tempeture/humidity logger
+
+[Install]
+WantedBy=multi-user.target
