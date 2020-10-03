@@ -124,11 +124,17 @@ def show_all():
 
 
 @click.command()
-def display_graph():
+@click.option('--last', type=int, default=None, required=False)
+def display_graph(last):
     import numpy as np
     from matplotlib import pyplot as plt
 
     qs = Event.objects.sort(['date'])
+
+    if last is not None:
+        now = datetime.now()
+        six_hours_ago = now - timedelta(hours=last + 2)
+        qs = qs.filter(date__gte=six_hours_ago)
 
     temperatures = np.array(qs.values_list('temperature', flat=True))
     humidities = np.array(qs.values_list('humidity', flat=True))
@@ -148,15 +154,7 @@ def display_graph():
 @click.command()
 @click.argument('file')
 def export(file):
-    import json
-
-    with open(file, 'w') as fp:
-        json.dump(
-            [event.to_dict() for event in Event.objects.sort(('date',))],
-            sort_keys=True,
-            indent=4,
-            fp=fp
-        )
+    Event.objects.to_json(file)
 
 
 @click.group()
