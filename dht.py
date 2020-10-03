@@ -25,7 +25,7 @@ class EventManager(mongomodel.QuerySet):
             return (
                 round(event.temperature, 2),
                 round(event.humidity, 2),
-                event.date
+                event.local_date
             )
 
         print(tabulate(
@@ -72,8 +72,12 @@ class Event(mongomodel.Document):
     def __str__(self):
         temp = f'{round(self.temperature, 2)}°C'
         humidity = f'{round(self.humidity, 2)}%'
-        date = self.date.strftime('%Y-%m-%d %H:%M:%S')
+        date = self.local_date.strftime('%Y-%m-%d %H:%M:%S')
         return f'temp: {temp:5} humidity: {humidity:5} date: {date}'
+
+    @property
+    def local_date(self):
+        return self.date + timedelta(hours=2)
 
 
 class ConsitentWaiter:
@@ -128,7 +132,10 @@ def display_graph():
 
     temperatures = np.array(qs.values_list('temperature', flat=True))
     humidities = np.array(qs.values_list('humidity', flat=True))
-    dates = np.array(qs.values_list('date', flat=True))
+    dates = np.array([
+        date + timedelta(hours=2) for
+        date in qs.values_list('date', flat=True)
+    ])
 
     plt.plot(dates, temperatures, label='Temperature')
     plt.plot(dates, humidities, label='Humidity')
