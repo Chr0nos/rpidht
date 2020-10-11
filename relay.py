@@ -16,9 +16,10 @@ class Relay:
         return f'<Relay pin {self.pin} ({self.state})>'
 
 
-class RelayBoard:
+class Board:
     def __init__(self, *relays):
         self.relays = relays
+        self.clean = False
 
     def __enter__(self, *_):
         GPIO.setwarnings(False)
@@ -33,7 +34,8 @@ class RelayBoard:
     def pins(self) -> List[int]:
         return list([relay.pin for relay in self.relays])
 
-    def setup(self):
+    def setup(self, clean=False):
+        self.clean = clean
         GPIO.setup(self.pins, GPIO.OUT, initial=GPIO.HIGH)
         return self
 
@@ -42,12 +44,13 @@ class RelayBoard:
             yield relay
 
     def __exit__(self, *_):
-        GPIO.cleanup()
+        if self.clean:
+            GPIO.cleanup()
 
 
 def setall(state=False):
     relays = [Relay(pin) for pin in (12, 11, 10, 8)]
-    with RelayBoard(*relays) as board:
+    with Board(*relays) as board:
         board.setup()
         for relay in board:
             relay.switch(state)
