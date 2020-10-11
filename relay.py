@@ -33,7 +33,7 @@ class RelayBoard:
         return [relay.pin for relay in self.relays]
 
     def setup(self):
-        GPIO.setup(self.pins, GPIO.OUT, GPIO.HIGH)
+        GPIO.setup(self.pins, GPIO.OUT, initial=GPIO.HIGH)
         return self
 
     def __exit__(self, *_):
