@@ -12,6 +12,9 @@ class Relay:
         self.state = state
         return self
 
+    def __repr__(self):
+        return f'<Relay pin {self.pin} ({self.state})>'
+
 
 class RelayBoard:
     def __init__(self, *relays):
@@ -30,8 +33,16 @@ class RelayBoard:
         return [relay.pin for relay in self.relays]
 
     def setup(self):
-        GPIO.setup(self.pins, GPIO.HIGH)
+        GPIO.setup(self.pins, GPIO.OUT, GPIO.HIGH)
         return self
 
     def __exit__(self, *_):
         GPIO.cleanup()
+
+
+def setall(state=False):
+    relays = [Relay(pin) for pin in (12, 11, 10, 8)]
+    with RelayBoard(*relays) as board:
+        board.setup()
+        for relay in relays:
+            relays.switch(state)
