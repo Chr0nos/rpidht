@@ -8,7 +8,7 @@ class Relay:
         self.state = None
 
     def switch(self, state: bool):
-        GPIO.output(self.pin, state)
+        GPIO.output(self.pin, state is False)
         self.state = state
         return self
 
