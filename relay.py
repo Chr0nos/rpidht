@@ -29,8 +29,9 @@ class RelayBoard:
         self.relays.append(relay)
         return self
 
+    @property
     def pins(self) -> List[int]:
-        return [relay.pin for relay in self.relays]
+        return list([relay.pin for relay in self.relays])
 
     def setup(self):
         GPIO.setup(self.pins, GPIO.OUT, initial=GPIO.HIGH)
