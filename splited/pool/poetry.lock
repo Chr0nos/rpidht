@@ -36,6 +36,17 @@ tls = ["ipaddress"]
 zstd = ["zstandard"]
 
 [[package]]
+name = "tabulate"
+version = "0.8.7"
+description = "Pretty-print tabular data"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.extras]
+widechars = ["wcwidth"]
+
+[[package]]
 name = "timeloop"
 version = "1.0.2"
 description = "An elegant way to run period tasks."
@@ -46,7 +57,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "04862221e26f0aca83c8bdcdea43135dd5f4be9d04b7f5ea69d4b92ac36ac9a8"
+content-hash = "afb1b965fa75a9dc3bf03160d5d70885d12ebf172ef9a203e89886f3dc0b2f33"
 
 [metadata.files]
 click = [
@@ -121,6 +132,10 @@ pymongo = [
     {file = "pymongo-3.11.1-cp39-cp39-win_amd64.whl", hash = "sha256:82bc20e554fe9175e6ae53db74c3f094c4d752a55e3b363b93ff93d87a868cb7"},
     {file = "pymongo-3.11.1-py2.7-macosx-10.14-intel.egg", hash = "sha256:3cf7726216a8792d147ba44433fddc19ed149531fb23899ce82d24a0a90ec2fd"},
     {file = "pymongo-3.11.1.tar.gz", hash = "sha256:a9c1a2538cd120283e7137ac97ce27ebdfcb675730c5055d6332b0043f4e5a55"},
+]
+tabulate = [
+    {file = "tabulate-0.8.7-py3-none-any.whl", hash = "sha256:ac64cb76d53b1231d364babcd72abbb16855adac7de6665122f97b593f1eb2ba"},
+    {file = "tabulate-0.8.7.tar.gz", hash = "sha256:db2723a20d04bcda8522165c73eea7c300eda74e0ce852d9022e0159d7895007"},
 ]
 timeloop = [
     {file = "timeloop-1.0.2-py2-none-any.whl", hash = "sha256:70cb69eeef39968ea0e6dd68a3a3a51257d5f4aa27b177ab1b19ca86ff525946"},

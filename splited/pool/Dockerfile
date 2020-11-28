@@ -5,6 +5,7 @@ RUN poetry export --without-hashes -f requirements.txt --dev \
 	| poetry run pip install -r /dev/stdin \
 	&& poetry debug
 
-COPY pool/ ./
-CMD ["python", "notif/loop.py"]
+COPY pool/ ./pool/
+COPY loop.py ./
+CMD ["python", "loop.py"]
 

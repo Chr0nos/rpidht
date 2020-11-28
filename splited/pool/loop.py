@@ -20,4 +20,5 @@ def read_mesurement():
 
 
 if __name__ == '__main__':
+    read_mesurement()
     tl.start(block=True)
